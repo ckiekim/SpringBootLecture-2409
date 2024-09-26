@@ -1,4 +1,4 @@
-package com.hae.demo;
+package com.hae.demo.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
