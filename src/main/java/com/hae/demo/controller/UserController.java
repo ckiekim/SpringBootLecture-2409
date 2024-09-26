@@ -6,10 +6,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,6 +37,32 @@ public class UserController {
                     .build();
             userService.registerUser(user);
         }
+        return "redirect:/user/list";
+    }
+
+    @GetMapping("/update/{uid}")
+    public String updateForm(@PathVariable String uid, Model model) {
+        User user = userService.getUserByUid(uid);
+        model.addAttribute("user", user);
+        return "user/update";
+    }
+
+    @PostMapping("/update")
+    public String updateProc(String uid, String pwd, String pwd2, String uname, String email) {
+        User user = userService.getUserByUid(uid);
+        if (pwd.equals(pwd2) && pwd.length() >= 4) {
+            String hashedPwd = BCrypt.hashpw(pwd, BCrypt.gensalt());
+            user.setPwd(hashedPwd);
+        }
+        user.setUname(uname);
+        user.setEmail(email);
+        userService.updateUser(user);
+        return "redirect:/user/list";
+    }
+
+    @GetMapping("/delete/{uid}")
+    public String delete(@PathVariable String uid) {
+        userService.deleteUser(uid);
         return "redirect:/user/list";
     }
 
