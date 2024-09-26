@@ -2,6 +2,7 @@ package com.hae.demo.controller;
 
 import com.hae.demo.entity.User;
 import com.hae.demo.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -64,6 +65,39 @@ public class UserController {
     public String delete(@PathVariable String uid) {
         userService.deleteUser(uid);
         return "redirect:/user/list";
+    }
+
+    @GetMapping("/login")
+    public String loginForm() {
+        return "user/login";
+    }
+
+    @PostMapping("/login")
+    public String loginProc(String uid, String pwd, Model model, HttpSession session) {
+        int result = userService.login(uid, pwd);
+        String msg = null, url = null;
+        if (result == userService.CORRECT_LOGIN) {
+            User user = userService.getUserByUid(uid);
+            session.setAttribute("sessUid", uid);
+            session.setAttribute("sessUname", user.getUname());
+            msg = user.getUname() + "님 환영합니다.";
+            url = "/user/list";
+        } else if (result == userService.WRONG_PASSWORD) {
+            msg = "패스워드가 틀립니다.";
+            url = "/user/login";
+        } else {
+            msg = "아이디가 없습니다.";
+            url = "/user/register";
+        }
+        model.addAttribute("msg", msg);
+        model.addAttribute("url", url);
+        return "common/alertMsg";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/user/login";
     }
 
     @GetMapping("/lombok")
