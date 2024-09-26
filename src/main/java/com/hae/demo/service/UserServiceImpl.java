@@ -1,35 +1,39 @@
 package com.hae.demo.service;
 
 import com.hae.demo.entity.User;
+import com.hae.demo.repositoty.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
+    @Autowired private UserRepository userRepository;
+
     @Override
     public User getUserByUid(String uid) {
-        return null;
+        return userRepository.findById(uid).orElse(null);       // DB 액세스 결과가 Optional<User>
     }
 
     @Override
     public List<User> getUserList() {
-        return List.of();
+        return userRepository.findAll();
     }
 
     @Override
     public void registerUser(User user) {
-
+        userRepository.save(user);
     }
 
     @Override
     public void updateUser(User user) {
-
+        userRepository.save(user);
     }
 
     @Override
     public void deleteUser(String uid) {
-
+        userRepository.deleteById(uid);
     }
 
     @Override
