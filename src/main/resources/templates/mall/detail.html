@@ -23,16 +23,18 @@
     </span>
   </h1>
 
-  <img th:src="${book.imageUrl}" alt="${book.title}" height="300">
+  <img th:src="${book.imageUrl}" alt="${book.title}" height="200">
   <form action="/mall/addItemToCart" method="post">
-    <input type="hidden" name="bid" value="${book.bid}">
+    <input type="hidden" name="bid" th:value="${book.bid}">
     <table>
       <tr><td th:text="${book.title}">트렌드 코리아 2025</td></tr>
       <tr><td th:text="${book.author}">김난도 외 9명</td></tr>
       <tr><td th:text="${book.company}">미래의 창</td></tr>
       <tr><td th:text="${book.price}">20000</td></tr>
-      <tr><td><input type="text" name="quantity" value="0"></td></tr>
+      <tr><td></td></tr>
     </table>
+    <div style="width: 800px" th:utext="${book.summary}">책 소개 내용</div><br>
+    수량: <input type="text" name="quantity" value="0"><br><br>
     <button type="submit">카트에 담기</button>
   </form>
 </body>

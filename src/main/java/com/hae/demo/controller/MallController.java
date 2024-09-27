@@ -9,10 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -31,8 +28,15 @@ public class MallController {
         return "mall/list";
     }
 
+    @GetMapping("/detail/{bid}")
+    public String detail(@PathVariable int bid, Model model) {
+        Book book = bookService.getBook(bid);
+        model.addAttribute("book", book);
+        return "mall/detail";
+    }
+
     @PostMapping("/addItemsToCart")
-    public String addToCart(@RequestParam Map<String, String> quantities, HttpSession session, Model model) {
+    public String addItemsToCart(@RequestParam Map<String, String> quantities, HttpSession session) {
         String uid = (String) session.getAttribute("sessUid");
         System.out.println(uid);
         for (Map.Entry<String, String> entry: quantities.entrySet()) {      // 입력 파라메터의 이름과 갯수를 모를 경우
@@ -46,7 +50,14 @@ public class MallController {
             Book book = bookService.getBook(bid);
             cartService.addToCart(uid, book, quantity);
         }
+        return "redirect:/mall/list";
+    }
 
+    @PostMapping("/addItemToCart")
+    public String addItemToCart(int bid, int quantity, HttpSession session) {
+        String uid = (String) session.getAttribute("sessUid");
+        Book book = bookService.getBook(bid);
+        cartService.addToCart(uid, book, quantity);
         return "redirect:/mall/list";
     }
 
