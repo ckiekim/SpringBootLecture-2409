@@ -1,5 +1,6 @@
 package com.hae.demo.controller;
 
+import com.hae.demo.entity.BookStat;
 import com.hae.demo.entity.Cart;
 import com.hae.demo.entity.Order;
 import com.hae.demo.entity.OrderItem;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/order")
@@ -82,4 +85,40 @@ public class OrderController {
         return "order/listAll";
     }
 
+    @GetMapping("/bookStat")
+    public String bookStat(Model model) {
+        LocalDateTime startTime = LocalDateTime.of(2024, 1, 1, 0, 0, 0);
+        LocalDateTime endTime = LocalDateTime.of(2024, 12, 31, 23, 59, 59);
+        List<Order> orderList = orderService.getOrdersByDateRange(startTime, endTime);
+        Map<Integer, BookStat> map = new HashMap<>();
+
+        for (Order order: orderList) {
+            List<OrderItem> itemList = order.getOrderItems();
+            for (OrderItem item: itemList) {
+                int bid = item.getBook().getBid();
+                if (map.containsKey(bid)) {
+                    BookStat bookStat = map.get(bid);
+                    bookStat.setQuantity(bookStat.getQuantity() + item.getQuantity());
+                    map.replace(bid, bookStat);
+                } else {
+                    BookStat bookStat = BookStat.builder()
+                            .bid(bid).title(item.getBook().getTitle())
+                            .company(item.getBook().getCompany())
+                            .unitPrice(item.getBook().getPrice())
+                            .quantity(item.getQuantity())
+                            .build();
+                    map.put(bid, bookStat);
+                }
+            }
+        }
+
+        List<BookStat> bookStatList = new ArrayList<>();
+        for (Map.Entry<Integer, BookStat> entry: map.entrySet()) {
+            BookStat bookStat = map.get(entry.getKey());
+            bookStat.setTotalPrice(bookStat.getUnitPrice() * bookStat.getQuantity());
+            bookStatList.add(bookStat);
+        }
+        model.addAttribute("bookStatList", bookStatList);
+        return "order/bookStat";
+    }
 }
