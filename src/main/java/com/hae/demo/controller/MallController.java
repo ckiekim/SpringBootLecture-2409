@@ -1,6 +1,7 @@
 package com.hae.demo.controller;
 
 import com.hae.demo.entity.Book;
+import com.hae.demo.entity.Cart;
 import com.hae.demo.service.BookService;
 import com.hae.demo.service.CartService;
 import com.hae.demo.service.UserService;
@@ -30,7 +31,7 @@ public class MallController {
         return "mall/list";
     }
 
-    @PostMapping("/addToCart")
+    @PostMapping("/addItemsToCart")
     public String addToCart(@RequestParam Map<String, String> quantities, HttpSession session, Model model) {
         String uid = (String) session.getAttribute("sessUid");
         System.out.println(uid);
@@ -47,5 +48,18 @@ public class MallController {
         }
 
         return "redirect:/mall/list";
+    }
+
+    @GetMapping("/cart")
+    public String cart(HttpSession session, Model model) {
+        String uid = (String) session.getAttribute("sessUid");
+        List<Cart> cartList = cartService.getCartListByUser(uid);
+        int totalPrice = 0;
+        for (Cart cart: cartList) {
+            totalPrice += cart.getBook().getPrice() * cart.getQuantity();
+        }
+        model.addAttribute("cartList", cartList);
+        model.addAttribute("totalPrice", totalPrice);
+        return "mall/cart";
     }
 }
