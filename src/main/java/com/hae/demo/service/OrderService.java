@@ -8,5 +8,5 @@ import java.util.List;
 public interface OrderService {
 
     Order createOrder(String uid, List<Cart> cartList);
-    
+
 }
