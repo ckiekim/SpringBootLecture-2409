@@ -32,7 +32,7 @@
       <td th:text="${order.oid}">1</td>
       <td>[[${order.user.uid}]]</td>
       <td>[[${order.user.uname}]]</td>
-      <td>[[${order.orderItems[0].book.title}]] 외</td>
+      <td>[[${orderTitleList.get(orderStat.index)}]]</td>
       <td>[[${#temporals.format(order.orderDateTime, 'yy-MM-dd HH:mm')}]]</td>
       <td th:text="${order.totalAmount}">115000</td>
       <td>
