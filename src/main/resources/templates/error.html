@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="margin: 50px;">
+    <h1>에러 페이지</h1>
+    <p>[[${status}]]</p>
+    <p>[[${error}]]</p>
+    <p>[[${message}]]</p>
+    <button onclick="location.href='/mall/list'">도서몰로 가기</button><br>
+    <img src="/img/not-found.svg" width="70%">
+</body>
+</html>
