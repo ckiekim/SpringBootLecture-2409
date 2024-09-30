@@ -54,4 +54,5 @@ public class CartRepositoryTest {
         assertThat(foundCart.getBook().getPrice()).isEqualTo(20000);
         assertThat(foundCart.getQuantity()).isEqualTo(2);
     }
+
 }

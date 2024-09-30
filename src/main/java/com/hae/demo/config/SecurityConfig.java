@@ -21,9 +21,10 @@ public class SecurityConfig {
                 .headers(x -> x.frameOptions(y -> y.disable()))     // H2 - console, CK Editor 사용
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/user/register", "/mall/list",
+                                "/book/**",         // 통합 테스트 하는 경우
                                 "/img/**", "/js/**", "/css/**", "/error/**").permitAll()
                         .requestMatchers("/user/list", "/user/update", "/user/delete",
-                                "/book/**", "/order/listAll", "/order/bookStat").hasAuthority("ROLE_ADMIN")
+                                "/order/listAll", "/order/bookStat").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(auth -> auth
