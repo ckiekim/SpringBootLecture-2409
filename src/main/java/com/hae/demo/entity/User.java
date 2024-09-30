@@ -22,4 +22,5 @@ public class User {
     private String uname;
     private String email;
     private LocalDate regDate;
+    private String role;
 }
