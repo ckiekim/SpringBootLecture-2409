@@ -1,6 +1,8 @@
 package com.hae.demo.config;
 
 import com.hae.demo.filter.JwtRequestFilter;
+import com.hae.demo.service.MyOAuth2UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,10 +12,11 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+    @Autowired private MyOAuth2UserService myOAuth2UserService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
                 .csrf(auth -> auth.disable())   // CSRF(Cross-Site Request Forgery) 방어 기능 비활성화
                 .headers(x -> x.frameOptions(y -> y.disable()))     // H2 - console, CK Editor 사용
                 .authorizeHttpRequests(requests -> requests
@@ -35,8 +38,14 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)    // 로그아웃시 세션 삭제
                         .deleteCookies("JSESSIONID")    // 로그아웃시 쿠키 삭제
                         .logoutSuccessUrl("/user/login")
-                );
-        return http.build();
+                )
+                .oauth2Login(auth -> auth
+                        .loginPage("/user/login")
+                        .userInfoEndpoint(user -> user.userService(myOAuth2UserService))
+                        .defaultSuccessUrl("/user/loginSuccess", true)
+                )
+        ;
+        return httpSecurity.build();
     }
 
     // JWT 필터 빈 등록

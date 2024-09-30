@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public String updateProc(String uid, String pwd, String pwd2, String uname, String email, String role) {
+    public String updateProc(String uid, String pwd, String pwd2, String uname, String email, String role, String provider) {
         User user = userService.getUserByUid(uid);
         if (pwd.equals(pwd2) && pwd.length() >= 4) {
             String hashedPwd = BCrypt.hashpw(pwd, BCrypt.gensalt());
@@ -61,6 +61,7 @@ public class UserController {
         user.setUname(uname);
         user.setEmail(email);
         user.setRole(role);
+        user.setProvider(provider);
         userService.updateUser(user);
         return "redirect:/user/list";
     }
@@ -129,7 +130,7 @@ public class UserController {
     @ResponseBody
     public String lombok() {
         User user = new User();
-        user = new User("james", "1234", "제임스", "james@gmail.com", LocalDate.now(), "ROLE_USER");
+        user = new User("james", "1234", "제임스", "james@gmail.com", LocalDate.now(), "ROLE_USER", "local");
         user = User.builder()
                 .uid("maria").pwd("1234").uname("마리아").email("maria@naver.com").regDate(LocalDate.of(2024,9,1))
                 .build();
